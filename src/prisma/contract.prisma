@@ -1,0 +1,7 @@
+// use prisma-8
+
+model PageView {
+  id       Int      @id @default(autoincrement())
+  path     String
+  viewedAt DateTime @default(now())
+}

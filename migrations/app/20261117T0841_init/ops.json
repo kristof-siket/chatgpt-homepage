@@ -1,0 +1,68 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.PageView",
+    "label": "Create table \"PageView\"",
+    "summary": "Creates table \"PageView\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "PageView"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"PageView\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"PageView\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"PageView\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"PageView\"",
+        "sql": "CREATE TABLE \"public\".\"PageView\" (\n  \"id\" SERIAL NOT NULL,\n  \"path\" text NOT NULL,\n  \"viewedAt\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"PageView\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"PageView\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"PageView\""
+        }
+      }
+    ]
+  }
+]
