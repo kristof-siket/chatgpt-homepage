@@ -1,0 +1,4 @@
+// use prisma-8
+
+// The app serves static pages and stores nothing, so the contract declares no
+// models. It exists so `prisma db migrate` / `db verify` have a schema path.
